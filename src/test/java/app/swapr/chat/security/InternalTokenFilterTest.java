@@ -42,7 +42,7 @@ class InternalTokenFilterTest {
 
   @Test
   void rejectsInternalRequestWithoutTokenAs401ProblemDetails() throws Exception {
-    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/v1/users");
+    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/v1/conversations");
 
     filter.doFilter(request, response, chain);
 
@@ -56,7 +56,7 @@ class InternalTokenFilterTest {
 
   @Test
   void rejectsInternalRequestWithWrongTokenAs401() throws Exception {
-    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/v1/users");
+    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/v1/conversations");
     request.addHeader("X-Internal-Token", "not-the-token");
 
     filter.doFilter(request, response, chain);
@@ -67,7 +67,7 @@ class InternalTokenFilterTest {
 
   @Test
   void rejectsInternalRequestCarryingAuthorizationHeaderAs403EvenWithCorrectToken() throws Exception {
-    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/v1/users");
+    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/v1/conversations");
     request.addHeader("X-Internal-Token", TOKEN);
     request.addHeader("Authorization", "Bearer user.jwt.token");
 
@@ -81,7 +81,7 @@ class InternalTokenFilterTest {
 
   @Test
   void rejectsInternalRequestCarryingAuthorizationHeaderWithoutTokenAs401() throws Exception {
-    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/v1/users");
+    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/v1/conversations");
     request.addHeader("Authorization", "Bearer user.jwt.token");
 
     filter.doFilter(request, response, chain);
@@ -104,7 +104,7 @@ class InternalTokenFilterTest {
 
   @Test
   void passesInternalRequestWithCorrectTokenOnAsAuthenticatedInternalCaller() throws Exception {
-    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/v1/users");
+    MockHttpServletRequest request = new MockHttpServletRequest("GET", "/internal/v1/conversations");
     request.addHeader("X-Internal-Token", TOKEN);
     Authentication[] seen = new Authentication[1];
     MockFilterChain capturing = new MockFilterChain(new HttpServlet() {

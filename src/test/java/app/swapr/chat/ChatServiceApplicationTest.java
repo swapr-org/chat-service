@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.builder.SpringApplicationBuilder;
 import org.springframework.boot.health.actuate.endpoint.CompositeHealthDescriptor;
 import org.springframework.boot.health.actuate.endpoint.HealthDescriptor;
@@ -12,6 +11,8 @@ import org.springframework.boot.health.actuate.endpoint.HealthEndpoint;
 import org.springframework.boot.health.contributor.Status;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.test.context.TestConstructor;
+import org.springframework.test.context.TestConstructor.AutowireMode;
 
 @SpringBootTest(properties = {
     ChatServiceApplicationTest.NO_DATABASE,
@@ -20,13 +21,17 @@ import org.springframework.test.context.ActiveProfiles;
     "CORS_ALLOWED_ORIGINS=https://qa.swapr.test"
 })
 @ActiveProfiles("qa")
+@TestConstructor(autowireMode = AutowireMode.ALL)
 class ChatServiceApplicationTest {
 
   static final String NO_DATABASE =
       "spring.autoconfigure.exclude=org.springframework.boot.jdbc.autoconfigure.DataSourceAutoConfiguration";
 
-  @Autowired
-  private HealthEndpoint health;
+  private final HealthEndpoint health;
+
+  ChatServiceApplicationTest(HealthEndpoint health) {
+    this.health = health;
+  }
 
   @Test
   void reportsHealthyWithoutDatabaseIndicator() {
